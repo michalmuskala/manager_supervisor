@@ -14,7 +14,7 @@ defmodule ManagerSupervisor.Manager do
   end
 
   @impl true
-  def init({mod, arg}) do
+  def init({mod, {arg, parent}}) do
     try do
       mod.manager_init(arg)
     catch

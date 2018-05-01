@@ -3,7 +3,7 @@ defmodule ManagerSupervisor do
 
   @callback supervisor_init(arg :: term()) :: {:ok, DynamicSupervisor.sup_flags()} | :ignore
 
-  @callback manager_init(supervisor :: pid(), arg :: term()) ::
+  @callback manager_init(arg :: term()) ::
               {:ok, state}
               | {:ok, state, timeout() | :hibernate}
               | :ignore
@@ -71,7 +71,7 @@ defmodule ManagerSupervisor do
     children = [
       {Registry, keys: :unique, name: name},
       {DynamicSupervisor, mod: mod, arg: arg, name: {:via, Registry, {name, DynamicSupervisor}}},
-      {Manager, mod: mod, arg: arg, name: {:via, Registry, {name, Manager}}}
+      {Manager, mod: mod, arg: {arg, self()}, name: {:via, Registry, {name, Manager}}}
     ]
 
     Supervisor.init(children, strategy: :rest_for_one)
